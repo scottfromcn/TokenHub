@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
   output: "standalone",
   // Keep isolated UI runs independent of unrelated lockfiles above the checkout.
   turbopack: process.env.TOKENHUB_UI_RUN === "1" ? { root: process.cwd() } : undefined,
-  allowedDevOrigins: ["127.0.0.1", "localhost"],
+  allowedDevOrigins: ["127.0.0.1", "localhost", "tokenhub.suzhouzp.top"],
   distDir: process.env.TOKENHUB_NEXT_DIST_DIR || ".next",
   async headers() {
     return [
