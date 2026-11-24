@@ -41,11 +41,11 @@
 }
 
 .model-governance-empty-emblem.models::after {
-  background: color-mix(in srgb, var(--accent) 72%, #6d28d9);
+  background: color-mix(in srgb, var(--accent) 72%, #6a5f9e);
 }
 
 .model-governance-empty-emblem.routes::after {
-  background: color-mix(in srgb, var(--accent) 65%, #0891b2);
+  background: color-mix(in srgb, var(--accent) 65%, #5f7f9e);
 }
 
 .model-governance-empty-heading h3 {

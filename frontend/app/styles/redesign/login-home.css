@@ -6,8 +6,8 @@
   padding: clamp(16px, 3vw, 48px);
   background:
     radial-gradient(880px 430px at 76% 34%, rgba(255, 255, 255, 0.8), transparent 76%),
-    radial-gradient(780px 340px at 25% 76%, rgba(202, 221, 255, 0.56), transparent 74%),
-    linear-gradient(135deg, #f4f9ff 0%, #eef5ff 48%, #eaf3ff 100%);
+    radial-gradient(780px 340px at 25% 76%, rgba(222, 205, 178, 0.5), transparent 74%),
+    linear-gradient(135deg, #f7f4ec 0%, #f2eee3 48%, #ece7d9 100%);
 }
 
 .login-home-shell.login-shell::before {
@@ -17,7 +17,7 @@
   pointer-events: none;
   background:
     linear-gradient(115deg, rgba(255, 255, 255, 0.58), transparent 36%),
-    radial-gradient(560px 240px at 47% 12%, rgba(105, 151, 255, 0.12), transparent 72%);
+    radial-gradient(560px 240px at 47% 12%, rgba(217, 119, 87, 0.1), transparent 72%);
 }
 
 .login-home-shell .login-stage {
@@ -79,14 +79,14 @@
 }
 
 .login-home-shell .login-brand-copy strong {
-  color: #14213d;
+  color: #1f1e1d;
   font-size: 27px;
   line-height: 0.94;
   font-weight: 780;
 }
 
 .login-home-shell .login-brand-copy small {
-  color: #2d3b56;
+  color: #57544c;
   font-size: 13px;
   font-weight: 680;
   line-height: 1;
@@ -94,7 +94,7 @@
 }
 
 .login-home-shell .login-utility-actions .login-language-select .language-select-trigger {
-  color: #2d3b56;
+  color: #57544c;
   font-size: 13px;
   font-weight: 680;
   font-family: inherit;
@@ -106,8 +106,9 @@
 }
 
 .login-home-shell .login-hero-copy h1 {
+  font-family: var(--font-display);
   margin: 0;
-  color: #12234b;
+  color: #1f1e1d;
   display: flex;
   align-items: baseline;
   justify-content: center;
@@ -122,11 +123,11 @@
 
 .login-home-shell .login-hero-copy h1 .login-headline-ai,
 .login-home-shell .login-hero-copy p strong:first-child {
-  color: #2f6df3;
+  color: #c25f3d;
 }
 
 .login-home-shell .login-hero-copy h1 .login-headline-ai {
-  color: #2f6df3;
+  color: #c25f3d;
 }
 
 .login-home-shell .login-hero-copy p {
@@ -136,14 +137,14 @@
   align-items: center;
   justify-content: center;
   gap: 10px 18px;
-  color: #505d75;
+  color: #57544c;
   font-size: clamp(16px, 1.35vw, 21px);
   font-weight: 790;
   line-height: 1;
 }
 
 .login-home-shell .login-hero-copy p span {
-  color: #6f7b91;
+  color: #807d74;
   font-weight: 680;
 }
 
@@ -158,7 +159,7 @@
   width: 100%;
   box-sizing: border-box;
   min-height: 148px;
-  border: 1px solid rgba(222, 231, 244, 0.86);
+  border: 1px solid rgba(226, 222, 210, 0.86);
   border-radius: 14px;
   display: grid;
   justify-items: center;
@@ -167,9 +168,9 @@
   padding: 16px 12px;
   text-align: center;
   background:
-    radial-gradient(circle at 50% 24%, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.72) 62%, rgba(248, 251, 255, 0.62)),
+    radial-gradient(circle at 50% 24%, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.72) 62%, rgba(250, 249, 245, 0.62)),
     rgba(255, 255, 255, 0.72);
-  box-shadow: 0 18px 42px rgba(43, 78, 132, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.92);
+  box-shadow: 0 18px 42px rgba(73, 63, 44, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(18px);
 }
 
@@ -180,32 +181,32 @@
   display: grid;
   place-items: center;
   color: #ffffff;
-  box-shadow: 0 18px 34px rgba(57, 114, 245, 0.22);
+  box-shadow: 0 18px 34px rgba(198, 100, 66, 0.22);
 }
 
 .login-home-shell .login-feature-icon.route {
-  background: linear-gradient(145deg, #76a1ff, #346ff1);
+  background: linear-gradient(145deg, #e29a7f, #c96442);
 }
 
 .login-home-shell .login-feature-icon.shield {
-  background: linear-gradient(145deg, #7ce2c1, #26bd8d);
-  box-shadow: 0 18px 34px rgba(38, 189, 141, 0.2);
+  background: linear-gradient(145deg, #a8bd8b, #6c8a54);
+  box-shadow: 0 18px 34px rgba(108, 138, 84, 0.22);
 }
 
 .login-home-shell .login-feature-icon.cost {
-  background: linear-gradient(145deg, #a98bff, #7455ea);
-  box-shadow: 0 18px 34px rgba(116, 85, 234, 0.22);
+  background: linear-gradient(145deg, #a9c0d4, #5f7f9e);
+  box-shadow: 0 18px 34px rgba(95, 127, 158, 0.22);
 }
 
 .login-home-shell .login-feature-icon.ledger {
-  background: linear-gradient(145deg, #ffbd8b, #ff7d46);
-  box-shadow: 0 18px 34px rgba(255, 125, 70, 0.22);
+  background: linear-gradient(145deg, #e8c87e, #b8863b);
+  box-shadow: 0 18px 34px rgba(184, 134, 59, 0.24);
 }
 
 .login-home-shell .login-feature-card strong {
   display: block;
   max-width: 100%;
-  color: #102248;
+  color: #1f1e1d;
   font-size: 16px;
   font-weight: 820;
   line-height: 1;
@@ -217,7 +218,7 @@
 .login-home-shell .login-feature-card small {
   display: block;
   max-width: 100%;
-  color: #5f6f8b;
+  color: #57544c;
   font-size: 12px;
   font-weight: 630;
   line-height: 1.25;
@@ -238,11 +239,11 @@
   aspect-ratio: 760 / 460;
   height: auto;
   object-fit: contain;
-  filter: drop-shadow(0 24px 44px rgba(44, 80, 150, 0.12));
+  filter: drop-shadow(0 24px 44px rgba(73, 63, 44, 0.12));
 }
 
 .login-home-shell[data-theme="dark"] .login-dashboard-image {
-  filter: drop-shadow(0 26px 48px rgba(10, 132, 255, 0.12));
+  filter: drop-shadow(0 26px 48px rgba(217, 119, 87, 0.14));
   mix-blend-mode: screen;
 }
 
@@ -253,12 +254,12 @@
   width: 100%;
   min-height: 0;
   padding: 36px 32px;
-  border: 1px solid rgba(221, 230, 244, 0.8);
+  border: 1px solid rgba(226, 222, 210, 0.8);
   border-radius: 34px;
   align-self: center;
   justify-self: stretch;
   background: rgba(255, 255, 255, 0.86);
-  box-shadow: 0 32px 70px rgba(48, 80, 134, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.96);
+  box-shadow: 0 32px 70px rgba(73, 63, 44, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(22px);
 }
 
@@ -268,7 +269,8 @@
 }
 
 .login-home-shell .login-card-head h1 {
-  color: #122044;
+  font-family: var(--font-display);
+  color: #1f1e1d;
   font-size: 31px;
   line-height: 1.15;
   white-space: normal;
@@ -278,7 +280,7 @@
 
 .login-home-shell .login-card-head p {
   margin: 12px 0 0;
-  color: #59677f;
+  color: #57544c;
   font-size: 16px;
   font-weight: 560;
 }
@@ -290,7 +292,7 @@
 }
 
 .login-home-shell .login-card .field > span:first-child {
-  color: #253554;
+  color: #57544c;
   font-size: 14.5px;
   font-weight: 720;
 }
@@ -307,7 +309,7 @@
   left: 20px;
   top: 50%;
   z-index: 2;
-  color: #7e8ba3;
+  color: #807d74;
   transform: translateY(-50%);
 }
 
@@ -316,11 +318,11 @@
   min-width: 0;
   width: 100%;
   min-height: 56px;
-  border: 1px solid #d6deeb;
+  border: 1px solid #d7d1c2;
   border-radius: 15px;
   padding: 0 58px 0 54px;
   background: rgba(255, 255, 255, 0.74);
-  color: #17233f;
+  color: #1f1e1d;
   font-size: 16px;
   font-weight: 650;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78);
@@ -328,7 +330,7 @@
 
 .login-home-shell .login-card .login-input-field input::placeholder,
 .login-home-shell .login-card .password-field input::placeholder {
-  color: #a1abbd;
+  color: #b0ab9d;
   font-weight: 520;
 }
 
@@ -338,7 +340,7 @@
   width: 44px;
   height: 44px;
   translate: 0 -50%;
-  color: #60708d;
+  color: #807d74;
 }
 
 .login-home-shell .login-helper-row {
@@ -349,7 +351,7 @@
 }
 
 .login-home-shell .login-helper-row button {
-  color: #2470f5;
+  color: #c25f3d;
   font-size: 14px;
   font-weight: 720;
 }
@@ -359,8 +361,8 @@
   height: auto;
   padding: 14px;
   border-radius: 13px;
-  background: linear-gradient(180deg, #3b7cff, #2366f2);
-  box-shadow: 0 20px 34px rgba(47, 109, 243, 0.28);
+  background: #d97757;
+  box-shadow: 0 20px 34px rgba(198, 100, 66, 0.26);
   font-size: 18px;
   font-weight: 780;
 }
@@ -371,11 +373,11 @@
 }
 
 .login-home-shell .login-divider span {
-  background: #d9e1ee;
+  background: #d7d1c2;
 }
 
 .login-home-shell .login-divider small {
-  color: #51617d;
+  color: #807d74;
   font-size: 14px;
   font-weight: 680;
 }
@@ -385,17 +387,17 @@
   min-height: 56px;
   height: auto;
   padding: 10px;
-  border-color: #d8e0ed;
+  border-color: #d7d1c2;
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.58);
-  color: #263653;
+  color: #1f1e1d;
   font-size: 15px;
   font-weight: 700;
 }
 
 .login-home-shell .login-sso-icon {
-  color: #236df4;
-  background: rgba(52, 120, 246, 0.1);
+  color: #c25f3d;
+  background: rgba(217, 119, 87, 0.12);
 }
 
 .login-home-shell .login-theme-toggle,
@@ -497,8 +499,8 @@
 
 .login-home-shell.login-shell[data-theme="dark"] {
   background:
-    radial-gradient(780px 420px at 74% 28%, rgba(60, 95, 163, 0.28), transparent 74%),
-    linear-gradient(135deg, #0d1320 0%, #111a2a 50%, #0b1220 100%);
+    radial-gradient(780px 420px at 74% 28%, rgba(217, 119, 87, 0.16), transparent 74%),
+    linear-gradient(135deg, #191817 0%, #1f1e1d 50%, #171614 100%);
 }
 
 .login-home-shell[data-theme="dark"] .login-stage,
@@ -511,7 +513,7 @@
 .login-home-shell[data-theme="dark"] .login-hero-copy h1,
 .login-home-shell[data-theme="dark"] .login-feature-card strong,
 .login-home-shell[data-theme="dark"] .login-card-head h1 {
-  color: #f3f7ff;
+  color: #f5f3ec;
 }
 
 .login-home-shell[data-theme="dark"] .login-brand-copy small,
@@ -519,51 +521,51 @@
 .login-home-shell[data-theme="dark"] .login-hero-copy p,
 .login-home-shell[data-theme="dark"] .login-feature-card small,
 .login-home-shell[data-theme="dark"] .login-card-head p {
-  color: #aab8cf;
+  color: #b1aea5;
 }
 
 .login-home-shell[data-theme="dark"] .login-card .field > span:first-child {
-  color: #f8fbff;
+  color: #f0eee6;
 }
 
 .login-home-shell[data-theme="dark"] .login-feature-card,
 .login-home-shell[data-theme="dark"] .login-card {
-  border-color: rgba(96, 112, 142, 0.48);
-  background: rgba(17, 27, 43, 0.78);
+  border-color: rgba(74, 71, 64, 0.48);
+  background: rgba(38, 37, 36, 0.78);
   box-shadow: 0 28px 64px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 .login-home-shell[data-theme="dark"] .login-sso-button {
-  color: #edf4ff;
+  color: #f0eee6;
 }
 
 .login-home-shell[data-theme="dark"] .login-card .login-input-field input,
 .login-home-shell[data-theme="dark"] .login-card .password-field input,
 .login-home-shell[data-theme="dark"] .login-sso-button {
-  border-color: #31405a;
-  background: rgba(13, 20, 33, 0.82);
+  border-color: #4a4740;
+  background: rgba(31, 30, 29, 0.82);
 }
 
 .login-home-shell[data-theme="dark"] .login-card .login-input-field input,
 .login-home-shell[data-theme="dark"] .login-card .password-field input {
-  caret-color: #f8fbff;
-  color: #f8fbff;
-  -webkit-text-fill-color: #f8fbff;
+  caret-color: #f0eee6;
+  color: #f0eee6;
+  -webkit-text-fill-color: #f0eee6;
 }
 
 .login-home-shell[data-theme="dark"] .login-card .login-input-field input::placeholder,
 .login-home-shell[data-theme="dark"] .login-card .password-field input::placeholder {
-  color: #7f8da7;
+  color: #87847b;
 }
 
 .login-home-shell[data-theme="dark"] .login-input-field > svg,
 .login-home-shell[data-theme="dark"] .password-leading-icon,
 .login-home-shell[data-theme="dark"] .password-toggle {
-  color: #9bacca;
+  color: #b1aea5;
 }
 
 .login-home-shell[data-theme="dark"] .login-card .login-input-field input:-webkit-autofill,
 .login-home-shell[data-theme="dark"] .login-card .password-field input:-webkit-autofill {
-  box-shadow: inset 0 0 0 999px rgba(13, 20, 33, 0.82);
-  -webkit-text-fill-color: #f8fbff;
+  box-shadow: inset 0 0 0 999px rgba(31, 30, 29, 0.82);
+  -webkit-text-fill-color: #f0eee6;
 }
