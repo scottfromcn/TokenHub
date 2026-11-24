@@ -11,6 +11,7 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -1022,4 +1023,152 @@ func oauthRedirectWithFragment(returnURL string, values url.Values) string {
 	}
 	target.Fragment = values.Encode()
 	return target.String()
+}
+
+// registrationRateLimiter is a process-local per-IP throttle for the public
+// self-registration endpoint. It blunts scripted sign-up abuse on a single
+// instance; multi-instance deployments should front the endpoint with a
+// rate-limiting proxy.
+type registrationRateLimiter struct {
+	mu       sync.Mutex
+	attempts map[string][]time.Time
+	window   time.Duration
+	max      int
+}
+
+var registrationLimiter = &registrationRateLimiter{
+	attempts: map[string][]time.Time{},
+	window:   time.Hour,
+	max:      5,
+}
+
+func (l *registrationRateLimiter) allow(ip string, now time.Time) bool {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	recent := l.attempts[ip][:0]
+	kept := 0
+	for _, at := range l.attempts[ip] {
+		if now.Sub(at) < l.window {
+			recent = append(recent, at)
+			kept++
+		}
+	}
+	if kept >= l.max {
+		l.attempts[ip] = recent
+		return false
+	}
+	l.attempts[ip] = append(recent, now)
+	if len(l.attempts) > 10000 {
+		for key, times := range l.attempts {
+			if len(times) == 0 || now.Sub(times[len(times)-1]) >= l.window {
+				delete(l.attempts, key)
+			}
+		}
+	}
+	return true
+}
+
+func validRegistrationEmail(email string) bool {
+	email = strings.TrimSpace(email)
+	at := strings.Index(email, "@")
+	if at <= 0 || at == len(email)-1 || strings.Contains(email, " ") || len(email) > 254 {
+		return false
+	}
+	return strings.Count(email, "@") == 1 && strings.Contains(email[at:], ".")
+}
+
+func registrationUsernameFromEmail(email string) string {
+	local := strings.ToLower(email[:strings.Index(email, "@")])
+	var builder strings.Builder
+	for _, char := range local {
+		switch {
+		case char >= 'a' && char <= 'z', char >= '0' && char <= '9', char == '-', char == '_', char == '.':
+			builder.WriteRune(char)
+		default:
+			if builder.Len() > 0 && !strings.HasSuffix(builder.String(), "_") {
+				builder.WriteRune('_')
+			}
+		}
+		if builder.Len() >= 32 {
+			break
+		}
+	}
+	name := strings.Trim(builder.String(), "_.-")
+	if name == "" {
+		return "user_" + strings.ToLower(strings.TrimPrefix(NewID("reg"), "reg_"))[:8]
+	}
+	return name
+}
+
+// handleAdminRegistrationStatus reports whether the login page should offer
+// self-service sign-up. It is public like the login endpoint itself.
+func (s *Server) handleAdminRegistrationStatus(w http.ResponseWriter, r *http.Request) {
+	settings, err := s.store.DeploymentSettings()
+	if err != nil {
+		writeError(w, r, err)
+		return
+	}
+	writeJSON(w, http.StatusOK, map[string]any{
+		"registration_open": settings.Mode == deploymentModeToC && settings.SelfRegistration,
+		"deployment_mode":   settings.Mode,
+	})
+}
+
+// handleAdminRegister creates a role-user account from the public login page.
+// It only works in to_c mode with self-registration enabled.
+func (s *Server) handleAdminRegister(w http.ResponseWriter, r *http.Request) {
+	if !registrationLimiter.allow(s.clientIP(r), time.Now().UTC()) {
+		writeError(w, r, NewHTTPError(429, "registration_rate_limited", "Too many registration attempts, try again later"))
+		return
+	}
+	settings, err := s.store.DeploymentSettings()
+	if err != nil {
+		writeError(w, r, err)
+		return
+	}
+	if settings.Mode != deploymentModeToC || !settings.SelfRegistration {
+		writeError(w, r, NewHTTPError(403, "registration_disabled", "Self-registration is disabled"))
+		return
+	}
+	var req struct {
+		Email    string `json:"email"`
+		Password string `json:"password"`
+		Username string `json:"username"`
+	}
+	if err := s.decodeJSON(w, r, &req); err != nil {
+		writeError(w, r, err)
+		return
+	}
+	email := strings.ToLower(strings.TrimSpace(req.Email))
+	if !validRegistrationEmail(email) {
+		writeError(w, r, NewHTTPError(400, "invalid_email", "A valid email address is required"))
+		return
+	}
+	if len(req.Password) < 8 || len(req.Password) > 72 {
+		writeError(w, r, NewHTTPError(400, "invalid_password", "Password must be between 8 and 72 characters"))
+		return
+	}
+	username := strings.ToLower(strings.TrimSpace(req.Username))
+	if username == "" {
+		username = registrationUsernameFromEmail(email)
+	}
+	if len(username) < 2 || len(username) > 64 {
+		writeError(w, r, NewHTTPError(400, "invalid_username", "Username must be between 2 and 64 characters"))
+		return
+	}
+	user, err := s.store.CreateAdminUser(AdminUser{
+		Username: username,
+		Email:    email,
+		Role:     "user",
+		Status:   StatusActive,
+	}, req.Password)
+	if err != nil {
+		writeError(w, r, err)
+		return
+	}
+	s.recordAdminAuditWithStatus(r, AdminUser{ID: user.ID, Username: user.Username}, "register", "admin_user", user.ID, "success", "self-registration", nil, map[string]any{
+		"email": email,
+		"role":  "user",
+	})
+	writeJSON(w, http.StatusCreated, map[string]any{"data": user})
 }

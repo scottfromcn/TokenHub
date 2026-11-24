@@ -56,6 +56,26 @@ func (s *Server) routes() {
 	s.registerSingleMethodRoute(http.MethodGet, "/api/admin/auth/oauth/start", s.handleAdminOAuthStart, jsonMethodNotAllowed(http.MethodGet))
 	s.registerSingleMethodRoute(http.MethodGet, "/api/admin/auth/oauth/callback", s.handleAdminOAuthCallback, jsonMethodNotAllowed(http.MethodGet))
 	s.registerSingleMethodRoute(http.MethodPost, "/api/admin/auth/oauth/exchange", s.handleAdminOAuthExchange, jsonMethodNotAllowed(http.MethodPost))
+	s.registerSingleMethodRoute(http.MethodGet, "/api/admin/auth/registration", s.handleAdminRegistrationStatus, jsonMethodNotAllowed(http.MethodGet))
+	s.registerSingleMethodRoute(http.MethodPost, "/api/admin/auth/register", s.handleAdminRegister, jsonMethodNotAllowed(http.MethodPost))
+	s.registerSingleMethodRoute(http.MethodGet, "/api/admin/my/wallet", s.handleMyWalletGet, s.adminMethodNotAllowed("my_wallet", http.MethodGet))
+	s.registerSingleMethodRoute(http.MethodPost, "/api/admin/my/wallet/redeem", s.handleMyWalletRedeemPost, s.adminMethodNotAllowed("topup_redeem", http.MethodPost))
+	s.registerMethodRoutes("/api/admin/wallets", func(allowedMethods string) http.HandlerFunc {
+		return s.adminMethodNotAllowed("wallet", allowedMethods)
+	},
+		methodRoute{Method: http.MethodGet, Handler: s.handleAdminWalletsGet},
+		methodRoute{Method: http.MethodPost, Handler: s.handleAdminWalletsPost},
+	)
+	s.registerDynamicMethodRoute(http.MethodPatch, "/api/admin/wallets/{wallet_id}", s.handleAdminWalletPatch)
+	s.registerDynamicMethodRoute(http.MethodPost, "/api/admin/wallets/{wallet_id}/adjust", s.handleAdminWalletAdjustPost)
+	s.registerDynamicMethodRoute(http.MethodGet, "/api/admin/wallets/{wallet_id}/transactions", s.handleAdminWalletTransactionsGet)
+	s.registerMethodRoutes("/api/admin/topup-codes", func(allowedMethods string) http.HandlerFunc {
+		return s.adminMethodNotAllowed("wallet", allowedMethods)
+	},
+		methodRoute{Method: http.MethodGet, Handler: s.handleAdminTopupCodesGet},
+		methodRoute{Method: http.MethodPost, Handler: s.handleAdminTopupCodesPost},
+	)
+	s.registerDynamicMethodRoute(http.MethodPost, "/api/admin/topup-codes/{code_id}/revoke", s.handleAdminTopupCodeRevokePost)
 	s.registerSingleMethodRoute(http.MethodGet, "/api/admin/overview", s.handleAdminOverview, s.adminMethodNotAllowed("overview", http.MethodGet))
 	s.registerSingleMethodRoute(http.MethodPost, "/api/admin/playground/chat", s.handleAdminPlaygroundChat, s.adminMethodNotAllowed("playground", http.MethodPost))
 	s.registerSingleMethodRoute(http.MethodPost, "/api/admin/playground/chat/stream", s.handleAdminPlaygroundChatStream, s.adminMethodNotAllowed("playground", http.MethodPost))

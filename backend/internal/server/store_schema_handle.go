@@ -154,6 +154,55 @@ func SchemaMigrationRegistry() []dbschema.Migration {
 			StatementBudget:  8,
 			ChecksumOverride: "tokenhub-schema-image-job-worker-instance-v1",
 		},
+		{
+			Version: 12,
+			Name:    "add-prepaid-wallet-tables-sqlite",
+			Dialect: dbschema.DialectSQLite,
+			Statements: []string{
+				`CREATE TABLE IF NOT EXISTS "wallets" ("id" text PRIMARY KEY, "owner_kind" text, "owner_id" text, "balance_usd" real, "exempt" numeric, "note" text, "created_at" datetime, "updated_at" datetime)`,
+				`CREATE TABLE IF NOT EXISTS "wallet_transactions" ("id" text PRIMARY KEY, "wallet_id" text, "owner_kind" text, "owner_id" text, "type" text, "amount_usd" real, "balance_after_usd" real, "request_id" text, "ref_id" text, "note" text, "created_by" text, "created_at" datetime)`,
+				`CREATE TABLE IF NOT EXISTS "topup_codes" ("id" text PRIMARY KEY, "batch_id" text, "code_hash" text, "code_prefix" text, "face_value_usd" real, "status" text, "used_by_user_id" text, "used_at" datetime, "expires_at" datetime, "note" text, "created_by" text, "created_at" datetime)`,
+				`CREATE UNIQUE INDEX IF NOT EXISTS "idx_wallet_owner" ON "wallets"("owner_kind","owner_id")`,
+				`CREATE INDEX IF NOT EXISTS "idx_wallets_owner_id" ON "wallets"("owner_id")`,
+				`CREATE UNIQUE INDEX IF NOT EXISTS "idx_wallet_transactions_request_id" ON "wallet_transactions"("request_id")`,
+				`CREATE INDEX IF NOT EXISTS "idx_wallet_transactions_wallet_id" ON "wallet_transactions"("wallet_id")`,
+				`CREATE INDEX IF NOT EXISTS "idx_wallet_transactions_owner_kind" ON "wallet_transactions"("owner_kind")`,
+				`CREATE INDEX IF NOT EXISTS "idx_wallet_transactions_owner_id" ON "wallet_transactions"("owner_id")`,
+				`CREATE INDEX IF NOT EXISTS "idx_wallet_transactions_type" ON "wallet_transactions"("type")`,
+				`CREATE UNIQUE INDEX IF NOT EXISTS "idx_topup_codes_code_hash" ON "topup_codes"("code_hash")`,
+				`CREATE INDEX IF NOT EXISTS "idx_topup_codes_batch_id" ON "topup_codes"("batch_id")`,
+				`CREATE INDEX IF NOT EXISTS "idx_topup_codes_status" ON "topup_codes"("status")`,
+				`CREATE INDEX IF NOT EXISTS "idx_topup_codes_used_by_user_id" ON "topup_codes"("used_by_user_id")`,
+				`CREATE INDEX IF NOT EXISTS "idx_topup_codes_expires_at" ON "topup_codes"("expires_at")`,
+			},
+			// Three tables plus their indexes.
+			StatementBudget: 16,
+		},
+		{
+			// Dialect-less so both dialects converge on version 13. On SQLite
+			// the tables already exist from version 12 and every statement is
+			// IF NOT EXISTS; on PostgreSQL this creates them.
+			Version: 13,
+			Name:    "add-prepaid-wallet-tables-portable",
+			Statements: []string{
+				`CREATE TABLE IF NOT EXISTS "wallets" ("id" text PRIMARY KEY, "owner_kind" text, "owner_id" text, "balance_usd" double precision, "exempt" boolean, "note" text, "created_at" timestamptz, "updated_at" timestamptz)`,
+				`CREATE TABLE IF NOT EXISTS "wallet_transactions" ("id" text PRIMARY KEY, "wallet_id" text, "owner_kind" text, "owner_id" text, "type" text, "amount_usd" double precision, "balance_after_usd" double precision, "request_id" text, "ref_id" text, "note" text, "created_by" text, "created_at" timestamptz)`,
+				`CREATE TABLE IF NOT EXISTS "topup_codes" ("id" text PRIMARY KEY, "batch_id" text, "code_hash" text, "code_prefix" text, "face_value_usd" double precision, "status" text, "used_by_user_id" text, "used_at" timestamptz, "expires_at" timestamptz, "note" text, "created_by" text, "created_at" timestamptz)`,
+				`CREATE UNIQUE INDEX IF NOT EXISTS "idx_wallet_owner" ON "wallets"("owner_kind","owner_id")`,
+				`CREATE INDEX IF NOT EXISTS "idx_wallets_owner_id" ON "wallets"("owner_id")`,
+				`CREATE UNIQUE INDEX IF NOT EXISTS "idx_wallet_transactions_request_id" ON "wallet_transactions"("request_id")`,
+				`CREATE INDEX IF NOT EXISTS "idx_wallet_transactions_wallet_id" ON "wallet_transactions"("wallet_id")`,
+				`CREATE INDEX IF NOT EXISTS "idx_wallet_transactions_owner_kind" ON "wallet_transactions"("owner_kind")`,
+				`CREATE INDEX IF NOT EXISTS "idx_wallet_transactions_owner_id" ON "wallet_transactions"("owner_id")`,
+				`CREATE INDEX IF NOT EXISTS "idx_wallet_transactions_type" ON "wallet_transactions"("type")`,
+				`CREATE UNIQUE INDEX IF NOT EXISTS "idx_topup_codes_code_hash" ON "topup_codes"("code_hash")`,
+				`CREATE INDEX IF NOT EXISTS "idx_topup_codes_batch_id" ON "topup_codes"("batch_id")`,
+				`CREATE INDEX IF NOT EXISTS "idx_topup_codes_status" ON "topup_codes"("status")`,
+				`CREATE INDEX IF NOT EXISTS "idx_topup_codes_used_by_user_id" ON "topup_codes"("used_by_user_id")`,
+				`CREATE INDEX IF NOT EXISTS "idx_topup_codes_expires_at" ON "topup_codes"("expires_at")`,
+			},
+			StatementBudget: 16,
+		},
 	}
 }
 

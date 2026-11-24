@@ -134,6 +134,18 @@ type Store interface {
 	RotateAPIKey(id string, graceUntil *time.Time) (APIKey, string, error)
 	DeleteAPIKey(id string) error
 	ValidateAPIKey(rawSecret string, clientIP string) (Project, APIKey, error)
+	ListWallets(ownerKind string) ([]Wallet, error)
+	EnsureWallet(ownerKind string, ownerID string) (Wallet, error)
+	GetWallet(id string) (Wallet, error)
+	AdjustWallet(id string, amountUSD float64, note string, actor string) (Wallet, error)
+	SetWalletExempt(id string, exempt bool) (Wallet, error)
+	ListWalletTransactions(walletID string, limit int) ([]WalletTransaction, error)
+	MyWallet(userID string) (Wallet, []WalletTransaction, error)
+	CreateTopupCodes(count int, faceValueUSD float64, expiresAt *time.Time, note string, actor string) ([]TopupCode, []string, error)
+	ListTopupCodes(batchID string, status string, limit int) ([]TopupCode, error)
+	RevokeTopupCode(id string) error
+	RedeemTopupCode(userID string, rawCode string) (Wallet, TopupCode, error)
+	DeploymentSettings() (deploymentSettings, error)
 	AddProvider(provider Provider) Provider
 	CreateProvider(provider Provider) (Provider, error)
 	GetProvider(id string) (Provider, bool)

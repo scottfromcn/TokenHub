@@ -289,6 +289,9 @@ func seedDefaultOrgResources(store Store) error {
 			syntheticDNSCIDRsField:        defaultSyntheticDNSCIDRs,
 			syntheticDNSAllowPrivateField: false,
 			providerEgressModeField:       providerEgressModeEnvironment,
+			deploymentModeField:           deploymentModeInternal,
+			selfRegistrationEnabledField:  false,
+			walletLowBalanceUSDField:      1,
 		},
 	}); err != nil {
 		return fmt.Errorf("seed gateway settings: %w", err)

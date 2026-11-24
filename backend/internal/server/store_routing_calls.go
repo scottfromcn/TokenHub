@@ -671,6 +671,15 @@ func (s *GormStore) finishCallTransaction(tx *gorm.DB, call CallContext, route R
 				return err
 			}
 		}
+		// Prepaid wallets debit the tenant cost of the call; a missing or
+		// exempt wallet (and internal deployment mode) makes this a no-op.
+		debitKey := call.Key
+		if liveKeyExists {
+			debitKey = liveKey
+		}
+		if err := s.settlePrepaidWalletDebit(tx, debitKey, call.Project, call.RequestID, usage.CostUSD, now); err != nil {
+			return err
+		}
 		if call.UserQuotaEnabled {
 			userDayCounter, err := s.quotaBucketForUpdate(tx, call.UserQuotaID, "day", periods.Day, attributedUserID)
 			if err != nil {

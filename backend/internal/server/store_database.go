@@ -990,6 +990,9 @@ func schemaModels() []any {
 		&AdminPasswordResetToken{},
 		&BootstrapCredential{},
 		&SQLiteBackupRecord{},
+		&Wallet{},
+		&WalletTransaction{},
+		&TopupCode{},
 	}
 }
 

@@ -61,6 +61,11 @@ func (s *GormStore) admitCallTransaction(ctx context.Context, tx *gorm.DB, key A
 	if !modelAllowedByScopes(privateProject, privateKey, modelName) {
 		return admission, ErrModelNotAllowed
 	}
+	// Prepaid enforcement runs before any counter consumption so a blocked
+	// call leaves no rate-limit or quota residue behind.
+	if err := s.admitPrepaidWallet(tx, privateKey, privateProject); err != nil {
+		return admission, err
+	}
 	model, err = resolveModelPricingSource(tx, model)
 	if err != nil {
 		return admission, err

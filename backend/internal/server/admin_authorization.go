@@ -64,12 +64,12 @@ func canAdmin(role string, resource string, method string) bool {
 		if write {
 			return resource == "identity" || resource == "project" || resource == "api_key" || resource == "approval" || resource == "playground" || resource == "quota"
 		}
-		return resource == "overview" || resource == "project" || resource == "api_key" || resource == "usage" || resource == "audit" || resource == "identity" || resource == "approval" || resource == "quota"
+		return resource == "overview" || resource == "project" || resource == "api_key" || resource == "usage" || resource == "audit" || resource == "identity" || resource == "approval" || resource == "quota" || resource == "wallet"
 	case "user":
 		if write {
-			return resource == "api_key" || resource == "playground"
+			return resource == "api_key" || resource == "playground" || resource == "topup_redeem"
 		}
-		return resource == "overview" || resource == "project" || resource == "api_key" || resource == "usage" || resource == "audit" || resource == "model" || resource == "playground"
+		return resource == "overview" || resource == "project" || resource == "api_key" || resource == "usage" || resource == "audit" || resource == "model" || resource == "playground" || resource == "my_wallet"
 	default:
 		return !write && resource == "overview"
 	}

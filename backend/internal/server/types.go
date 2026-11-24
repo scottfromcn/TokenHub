@@ -57,6 +57,7 @@ var (
 	ErrRateLimitExceeded     = NewHTTPError(429, "rate_limit_exceeded", "Rate limit exceeded")
 	ErrQuotaExceeded         = NewHTTPError(429, "quota_exceeded", "Quota exceeded")
 	ErrBudgetExceeded        = NewHTTPError(429, "budget_exceeded", "Budget exceeded")
+	ErrInsufficientBalance   = NewHTTPError(402, "insufficient_balance", "Prepaid balance exhausted. Top up the wallet to continue")
 	ErrProviderMissing       = NewHTTPError(503, "provider_unavailable", "No available provider route")
 	ErrCoordinationLeaseLost = NewHTTPError(503, "coordination_lease_lost", "Cluster coordination lease was lost")
 )
