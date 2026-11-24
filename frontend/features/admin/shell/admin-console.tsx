@@ -54,6 +54,7 @@ import { APIKeyWizardModal, UserImportModal } from "../views/modals";
 import { EditModal, SettingsView } from "../views/settings-table";
 import { BillingView, UsageView } from "../views/usage-billing";
 import { APIKeyUsageView } from "../views/api-key-usage";
+import { PrepaidViews } from "../views/prepaid";
 
 export function AdminConsole({ defaultBaseURL }: { defaultBaseURL: string }) {
   const pathname = usePathname();
@@ -949,6 +950,8 @@ export function AdminConsole({ defaultBaseURL }: { defaultBaseURL: string }) {
             )
           ) : activeView === "plugin-pages" ? (
             <PluginPageView activePageKey={activePluginPageKey} api={api} data={data} onSelectPage={selectPluginPage} />
+          ) : activeView === "wallets" || activeView === "topup-codes" || activeView === "my-wallet" ? (
+            <PrepaidViews view={activeView} api={api} data={data} user={currentUser} />
           ) : activeView === "settings" ? (
             <SettingsView
               api={api}

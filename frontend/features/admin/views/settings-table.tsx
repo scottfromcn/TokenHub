@@ -1,7 +1,7 @@
 import { Edit3, Info, Plus, RefreshCw, Search, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { type FormEvent, useMemo, useState } from "react";
-import { type AdminResource, type AdminUser, type ApiContext, type APIKey, type AppData, type ModalState, type Model, type ModelRoute, type ResourceAction, type ResourceConfig, type SettingsTabKey, type ToolbarAction, type ViewKey } from "../core/types";
+import { type AdminResource, type AdminUser, type ApiContext, type APIKey, type AppData, type FieldConfig, type ModalState, type Model, type ModelRoute, type ResourceAction, type ResourceConfig, type SettingsTabKey, type ToolbarAction, type ViewKey } from "../core/types";
 import { filterRows } from "../domain/catalog";
 import { readPath, rowID, stringifyValue } from "../domain/entities";
 import { formatNumber, formatTime } from "../domain/formatting";
@@ -81,6 +81,7 @@ export function SettingsView({
         <>
           <SystemSettingsPanel
             config={activeConfig}
+            data={data}
             items={filteredItems as AdminResource[]}
             language={language}
             onLanguageChange={onLanguageChange}
@@ -138,6 +139,7 @@ export function LanguagePreferenceRow({
 export function SystemSettingsPanel({
   config,
   items,
+  data,
   language,
   onLanguageChange,
   onRestoreModelCatalog,
@@ -145,6 +147,7 @@ export function SystemSettingsPanel({
 }: {
   config: ResourceConfig<AdminResource>;
   items: AdminResource[];
+  data: AppData;
   language: AppLanguage;
   onLanguageChange: (language: AppLanguage) => void;
   onRestoreModelCatalog: () => void;
@@ -189,7 +192,7 @@ export function SystemSettingsPanel({
               {settingFields.map((field) => (
                 <div className="system-setting-item" key={field.key}>
                   <span>{tx(field.label)}</span>
-                  <strong>{settingValue(current, field.key)}</strong>
+                  <strong>{settingDisplayValue(current, field, data)}</strong>
                   {field.help ? <small>{tx(field.help)}</small> : null}
                 </div>
               ))}
@@ -223,8 +226,15 @@ export function SystemSettingsPanel({
   );
 }
 
-function settingValue(item: AdminResource, key: string) {
-  return stringifyValue(item.fields?.[key]) || "-";
+function settingDisplayValue(item: AdminResource, field: FieldConfig, data: AppData) {
+  const raw = stringifyValue(item.fields?.[field.key]);
+  if (field.type === "select") {
+    const options = field.optionsFromData?.(data) ?? (field.options ?? []).map((option) => ({ value: option, label: option }));
+    const matched = options.find((option) => option.value === raw);
+    if (matched) return tx(matched.label);
+    if (!raw) return tx("未设置");
+  }
+  return raw || "-";
 }
 
 export function APIKeyFlowHint({ data }: { data: AppData }) {

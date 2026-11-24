@@ -1,5 +1,5 @@
-import { Database, Eye, EyeOff, Fingerprint, KeyRound, LockKeyhole, Moon, ReceiptText, Route, ShieldCheck, Sun, UserRound, UserRoundCheck, Users } from "lucide-react";
-import { type FormEvent, useRef, useState } from "react";
+import { Database, Eye, EyeOff, Fingerprint, KeyRound, LockKeyhole, Mail, Moon, ReceiptText, Route, ShieldCheck, Sun, UserRound, UserRoundCheck, Users } from "lucide-react";
+import { type FormEvent, useEffect, useRef, useState } from "react";
 import { savePendingOAuthLogin } from "../core/session";
 import { type AppData, type LoginIdentityProvider, type PluginDescriptor, viewRoutes } from "../core/types";
 import { stringifyValue } from "../domain/entities";
@@ -715,10 +715,67 @@ export function LoginView({
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [ssoLoading, setSSOLoading] = useState(false);
   const [ssoError, setSSOError] = useState("");
+  const [email, setEmail] = useState("");
+  const [regUsername, setRegUsername] = useState("");
+  const [regPassword, setRegPassword] = useState("");
+  const [regPasswordConfirm, setRegPasswordConfirm] = useState("");
   const ssoStarting = useRef(false);
+  const [registrationOpen, setRegistrationOpen] = useState(false);
+  const [mode, setMode] = useState<"login" | "register">("login");
+  const [registerDone, setRegisterDone] = useState("");
+  const [regBusy, setRegBusy] = useState(false);
+  const [regError, setRegError] = useState("");
+
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch(`${baseURL.replace(/\/$/, "")}/api/admin/auth/registration`, { signal: controller.signal })
+      .then(async (response) => (response.ok ? await response.json() as { registration_open?: boolean } : null))
+      .then((payload) => {
+        if (payload?.registration_open) setRegistrationOpen(true);
+      })
+      .catch(() => undefined);
+    return () => controller.abort();
+  }, [baseURL]);
+
+  async function submitRegister() {
+    setRegError("");
+    setRegisterDone("");
+    if (!email.trim() || !regPassword || !regPasswordConfirm) {
+      setRegError(tx("请填写邮箱和密码"));
+      return;
+    }
+    if (regPassword !== regPasswordConfirm) {
+      setRegError(tx("两次输入的密码不一致"));
+      return;
+    }
+    setRegBusy(true);
+    try {
+      const response = await fetch(`${baseURL.replace(/\/$/, "")}/api/admin/auth/register`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ email: email.trim(), password: regPassword, ...(regUsername.trim() ? { username: regUsername.trim() } : {}) }),
+      });
+      if (!response.ok) {
+        const detail = await response.json().catch(() => null) as { error?: { message?: string } } | null;
+        throw new Error(detail?.error?.message || tx("注册失败"));
+      }
+      setRegisterDone(tx("注册成功，请使用邮箱登录。"));
+      setMode("login");
+      setIdentity(email.trim());
+      setPassword("");
+    } catch (reason) {
+      setRegError(reason instanceof Error ? reason.message : tx("注册失败"));
+    } finally {
+      setRegBusy(false);
+    }
+  }
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (mode === "register") {
+      void submitRegister();
+      return;
+    }
     onLogin(identity, password);
   }
 
@@ -784,9 +841,83 @@ export function LoginView({
 
         <form className="login-card" onSubmit={submit}>
           <div className="login-card-head">
-            <h1>{tx("欢迎回来")}</h1>
-            <p>{tx("登录 TokenHub 控制台")}</p>
+            <h1>{mode === "register" ? tx("创建账号") : tx("欢迎回来")}</h1>
+            <p>{mode === "register" ? tx("注册即可自助管理 API Key") : tx("登录 TokenHub 控制台")}</p>
           </div>
+          {registerDone ? <div className="login-error" style={{ borderColor: "var(--pos)", color: "var(--pos)" }}>{registerDone}</div> : null}
+          {mode === "register" ? (
+            <>
+              <label className="field">
+                <span>{tx("邮箱")}</span>
+                <span className="login-input-field">
+                  <Mail aria-hidden="true" size={18} />
+                  <input
+                    placeholder={tx("请输入邮箱")}
+                    value={email}
+                    onChange={(event) => setEmail(event.target.value)}
+                    type="email"
+                    required
+                  />
+                </span>
+              </label>
+              <label className="field">
+                <span>{tx("用户名（可选）")}</span>
+                <span className="login-input-field">
+                  <UserRound aria-hidden="true" size={18} />
+                  <input
+                    placeholder={tx("默认取邮箱前缀")}
+                    value={regUsername}
+                    onChange={(event) => setRegUsername(event.target.value)}
+                  />
+                </span>
+              </label>
+              <label className="field">
+                <span>{tx("密码")}</span>
+                <span className="password-field">
+                  <LockKeyhole aria-hidden="true" className="password-leading-icon" size={18} />
+                  <input
+                    placeholder={tx("至少 8 位")}
+                    value={regPassword}
+                    type={passwordVisible ? "text" : "password"}
+                    onChange={(event) => setRegPassword(event.target.value)}
+                    minLength={8}
+                    required
+                  />
+                  <button
+                    aria-label={passwordVisible ? tx("隐藏密码") : tx("显示密码")}
+                    className="password-toggle"
+                    onClick={() => setPasswordVisible((value) => !value)}
+                    type="button"
+                  >
+                    {passwordVisible ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </span>
+              </label>
+              <label className="field">
+                <span>{tx("确认密码")}</span>
+                <span className="password-field">
+                  <LockKeyhole aria-hidden="true" className="password-leading-icon" size={18} />
+                  <input
+                    placeholder={tx("再次输入密码")}
+                    value={regPasswordConfirm}
+                    type={passwordVisible ? "text" : "password"}
+                    onChange={(event) => setRegPasswordConfirm(event.target.value)}
+                    minLength={8}
+                    required
+                  />
+                </span>
+              </label>
+              {regError ? <div className="login-error">{regError}</div> : null}
+              <button className="button login-submit" disabled={regBusy} type="submit">
+                {regBusy ? tx("注册中") : tx("注册账号")}
+              </button>
+              <div className="login-helper-row">
+                <span>{tx("已有账号？")}</span>
+                <button type="button" onClick={() => { setMode("login"); setRegError(""); setRegisterDone(""); }}>{tx("返回登录")}</button>
+              </div>
+            </>
+          ) : (
+            <>
           <label className="field">
             <span>{tx("账号 / 邮箱")}</span>
             <span className="login-input-field">
@@ -874,6 +1005,14 @@ export function LoginView({
               </div>
             </>
           ) : null}
+          {registrationOpen ? (
+            <div className="login-helper-row">
+              <span>{tx("还没有账号？")}</span>
+              <button type="button" onClick={() => { setMode("register"); setRegError(""); setRegisterDone(""); }}>{tx("注册新账号")}</button>
+            </div>
+          ) : null}
+            </>
+          )}
         </form>
       </section>
     </main>

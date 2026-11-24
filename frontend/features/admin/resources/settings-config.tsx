@@ -132,6 +132,31 @@ function formatQuotaUsage(template: string, usage: { requests: number; total_tok
 
 export function systemSettingConfig(): ResourceConfig<AdminResource> {
   const base = genericResourceConfig("settings", "系统设置", "网关地址、审计保留、企业集成和默认策略", [
+    {
+      key: "deployment_mode",
+      label: "部署模式",
+      type: "select",
+      optionsFromData: () => [
+        { value: "", label: "未设置（默认企业内部）" },
+        { value: "internal", label: "企业内部（后付费额度）" },
+        { value: "to_c", label: "面向公众 to C（预充值余额）" },
+      ],
+      help: "to C 模式启用预充值管控：余额不大于 0 的用户或项目的新请求会被拒绝（402）；企业内部模式保持现有后付费额度策略。未设置时按企业内部处理。",
+    },
+    {
+      key: "self_registration_enabled",
+      label: "开放自助注册",
+      type: "boolean",
+      visible: (values) => values.deployment_mode === "to_c",
+      help: "开启后登录页显示注册入口，新用户默认普通角色，可自助管理 API Key。",
+    },
+    {
+      key: "wallet_low_balance_usd",
+      label: "低余额提醒阈值（USD）",
+      type: "number",
+      visible: (values) => values.deployment_mode === "to_c",
+      help: "余额低于该值时在用户钱包页提示充值。",
+    },
     { key: "public_base_url", label: "公开 Base URL", help: "对外展示给业务系统和 API 文档示例的网关地址。" },
     { key: "default_timeout", label: "默认超时", help: "网关转发上游请求的默认等待时间，例如 120s。" },
     { key: "audit_retention", label: "审计保留", help: "请求和响应正文的保留周期，范围为 1d 至 3650d；请求元数据不会被清理。" },

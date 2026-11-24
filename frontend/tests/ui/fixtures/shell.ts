@@ -20,5 +20,6 @@ export function shellResponses(): Map<string, unknown> {
     ["GET /api/admin/billing/reconciliation-rules", { data: [] }],
     ["GET /api/admin/billing/reconciliations", { data: [] }],
     ["GET /api/admin/system/version", { current_version: "ui-fixture", latest_version: "ui-fixture", has_update: false, build_type: "source", deployment_type: "source", update_supported: false }],
+    ["GET /api/admin/auth/registration", { registration_open: false, deployment_mode: "internal" }],
   ].map(([key, value]) => [key, structuredClone(value)] as [string, unknown]));
 }

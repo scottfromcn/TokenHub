@@ -1,4 +1,4 @@
-import { Activity, AlertCircle, BarChart3, Bell, Boxes, Database, FileText, Gauge, KeyRound, LayoutDashboard, Puzzle, Send, Server, Settings, ShieldCheck, Sparkles, Users, WalletCards } from "lucide-react";
+import { Activity, AlertCircle, BarChart3, Bell, Boxes, Database, FileText, Gauge, KeyRound, LayoutDashboard, Puzzle, Send, Server, Settings, ShieldCheck, Sparkles, Ticket, Users, WalletCards } from "lucide-react";
 import { type AdminUser, type AppData, type AppRole, type NavItem, type NavLeafItem, type NavParentItem, recentViewsStorageKey, type TopSearchItem, type ViewKey, viewRoutes } from "./types";
 import { modelCapabilitySummary } from "../domain/entities";
 import { tx } from "../i18n/runtime";
@@ -22,6 +22,7 @@ export const userNavGroups: NavGroup[] = [
     items: [
       { view: "api-keys", label: "Key 管理", icon: KeyRound },
       { view: "models", label: "可用模型", icon: Boxes },
+      { view: "my-wallet", label: "我的钱包", icon: WalletCards },
     ],
   },
   {
@@ -96,6 +97,8 @@ export const adminNavGroups: NavGroup[] = [
     title: "成本治理",
     items: [
       { view: "billing", label: "成本账单", icon: WalletCards },
+      { view: "wallets", label: "预充值钱包", icon: WalletCards },
+      { view: "topup-codes", label: "充值兑换码", icon: Ticket },
       { view: "quota-policies", label: "额度策略", icon: Gauge },
       { view: "cost-centers", label: "成本中心", icon: Database },
     ],
@@ -201,6 +204,18 @@ export const standaloneViewMeta: Partial<Record<ViewKey, { title: string; descri
     title: "审批记录",
     description: "处理 Key 发放、额度提升和模型开通等治理审批。",
   },
+  wallets: {
+    title: "预充值钱包",
+    description: "管理用户与项目钱包余额、手动调账和豁免标记。",
+  },
+  "topup-codes": {
+    title: "充值兑换码",
+    description: "批量生成一次性充值码，用户在个人钱包中兑换入账。",
+  },
+  "my-wallet": {
+    title: "我的钱包",
+    description: "查看余额、兑换充值码和流水明细。",
+  },
   "routing-policies": {
     title: "作用域路由策略",
     description: "按 API Key、项目和全局优先级限制 Provider、资源、模型、标签与部署边界。",
@@ -220,8 +235,8 @@ export const roleViewAccess: Record<AppRole, ViewKey[]> = {
     (view) => view !== "project-members" && view !== "approval-flows",
   ),
   security: ["overview", "gateway", "usage", "audit", "alerts", "alert-events", "notification-channels", "alert-deliveries", "security-policies", "approvals"],
-  team_leader: ["overview", "gateway", "playground", "models", "projects", "api-keys", "teams", "users", "usage", "billing", "quota-policies", "audit", "approvals"],
-  user: ["overview", "gateway", "playground", "models", "api-keys", "usage", "audit"],
+  team_leader: ["overview", "gateway", "playground", "models", "projects", "api-keys", "teams", "users", "usage", "billing", "quota-policies", "audit", "approvals", "wallets"],
+  user: ["overview", "gateway", "playground", "models", "api-keys", "usage", "audit", "my-wallet"],
 };
 
 export function appRole(role: string): AppRole {
